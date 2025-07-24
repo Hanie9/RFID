@@ -714,146 +714,148 @@ class _ConfigTabState extends State<ConfigTab> {
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Text('Number of Antennas:'),
-              const SizedBox(width: 12),
-              DropdownButton<int>(
-                value: widget.appConfig.antennaCount,
-                items: [4, 8]
-                    .map(
-                      (count) =>
-                          DropdownMenuItem(value: count, child: Text('$count')),
-                    )
-                    .toList(),
-                onChanged: (val) {
-                  if (val != null) {
-                    setState(() {
-                      widget.appConfig.setAntennaCount(val);
-                    });
-                  }
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Antenna assignment summary at the very top
-          Text(
-            'Antenna Assignments',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: [
-              for (int i = 1; i <= appConfig.antennaCount; i++)
-                Chip(
-                  avatar: Icon(
-                    antennaAssignments[i] == 'Free'
-                        ? Icons.radio_button_unchecked
-                        : Icons.check_circle,
-                    color: antennaAssignments[i] == 'Free'
-                        ? Colors.grey
-                        : Colors.blue,
-                  ),
-                  label: Text('Antenna $i: ${antennaAssignments[i]}'),
-                  backgroundColor: antennaAssignments[i] == 'Free'
-                      ? Colors.grey[200]
-                      : Colors.blue[100],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text('Number of Antennas:'),
+                const SizedBox(width: 12),
+                DropdownButton<int>(
+                  value: widget.appConfig.antennaCount,
+                  items: [4, 8]
+                      .map(
+                        (count) => DropdownMenuItem(
+                          value: count,
+                          child: Text('$count'),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() {
+                        widget.appConfig.setAntennaCount(val);
+                      });
+                    }
+                  },
                 ),
-            ],
-          ),
-          const Divider(height: 32),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Groups', style: Theme.of(context).textTheme.headlineSmall),
-              ElevatedButton.icon(
-                onPressed: () => _showAddGroupDialog(),
-                icon: const Icon(Icons.add),
-                label: const Text('Add'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: groups.isEmpty
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Antenna assignment summary at the very top
+            Text(
+              'Antenna Assignments',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: [
+                for (int i = 1; i <= appConfig.antennaCount; i++)
+                  Chip(
+                    avatar: Icon(
+                      antennaAssignments[i] == 'Free'
+                          ? Icons.radio_button_unchecked
+                          : Icons.check_circle,
+                      color: antennaAssignments[i] == 'Free'
+                          ? Colors.grey
+                          : Colors.blue,
+                    ),
+                    label: Text('Antenna $i: ${antennaAssignments[i]}'),
+                    backgroundColor: antennaAssignments[i] == 'Free'
+                        ? Colors.grey[200]
+                        : Colors.blue[100],
+                  ),
+              ],
+            ),
+            const Divider(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Groups',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _showAddGroupDialog(),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            groups.isEmpty
                 ? const Center(child: Text('No groups configured.'))
-                : SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      children: List.generate(groups.length, (idx) {
-                        final g = groups[idx];
-                        return SizedBox(
-                          width: 320,
-                          child: Card(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 8,
-                              horizontal: 8,
-                            ),
-                            child: ListTile(
-                              title: Text('Group ${idx + 1}'),
-                              subtitle: SizedBox(
-                                height: 200, // or 220, 240, etc. as needed
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Input Antenna:  ${g['inputAntenna'] ?? 'None'}',
-                                    ),
-                                    Text(
-                                      'Output Antenna:  ${g['outputAntenna'] ?? 'None'}',
-                                    ),
-                                    Text(
-                                      'Input Limit Switch:  ${g['inputLimitSwitch'] ?? 'None'}',
-                                    ),
-                                    Text(
-                                      'Output Limit Switch:  ${g['outputLimitSwitch'] ?? 'None'}',
-                                    ),
-                                    Text(
-                                      'Alarm Output:  ${g['alarmOutput'] ?? 'None'}',
-                                    ),
-                                    Text('API Address:  ${g['apiAddress']}'),
-                                    Text('Read Time:  ${g['readTime']} ms'),
-                                    Text(
-                                      'Output Duration:  ${g['groupOutputDuration']} s',
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
+                : Column(
+                    children: List.generate(groups.length, (idx) {
+                      final g = groups[idx];
+                      return SizedBox(
+                        width: 320,
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 8,
+                          ),
+                          child: ListTile(
+                            title: Text('Group ${idx + 1}'),
+                            subtitle: SizedBox(
+                              height: 200, // or 220, 240, etc. as needed
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Colors.blue,
-                                    ),
-                                    onPressed: () =>
-                                        _showAddGroupDialog(editIdx: idx),
-                                    tooltip: 'Edit Group',
+                                  Text(
+                                    'Input Antenna:  ${g['inputAntenna'] ?? 'None'}',
                                   ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () => _deleteGroup(idx),
-                                    tooltip: 'Delete Group',
+                                  Text(
+                                    'Output Antenna:  ${g['outputAntenna'] ?? 'None'}',
+                                  ),
+                                  Text(
+                                    'Input Limit Switch:  ${g['inputLimitSwitch'] ?? 'None'}',
+                                  ),
+                                  Text(
+                                    'Output Limit Switch:  ${g['outputLimitSwitch'] ?? 'None'}',
+                                  ),
+                                  Text(
+                                    'Alarm Output:  ${g['alarmOutput'] ?? 'None'}',
+                                  ),
+                                  Text('API Address:  ${g['apiAddress']}'),
+                                  Text('Read Time:  ${g['readTime']} ms'),
+                                  Text(
+                                    'Output Duration:  ${g['groupOutputDuration']} s',
                                   ),
                                 ],
                               ),
                             ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () =>
+                                      _showAddGroupDialog(editIdx: idx),
+                                  tooltip: 'Edit Group',
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () => _deleteGroup(idx),
+                                  tooltip: 'Delete Group',
+                                ),
+                              ],
+                            ),
                           ),
-                        );
-                      }),
-                    ),
+                        ),
+                      );
+                    }),
                   ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
