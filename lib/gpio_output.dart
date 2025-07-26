@@ -3,9 +3,6 @@ import 'package:flutter/services.dart';
 
 const platform = MethodChannel('rfid_channel');
 
-// Remove GPIOOutputConfigPage and GPIOOutputMonitorPage classes
-// Keep only utility functions if used elsewhere
-
 Future<void> setGroupOutputsActive(
   AppConfig appConfig,
   int group,
@@ -16,15 +13,6 @@ Future<void> setGroupOutputsActive(
     await platform.invokeMethod(
       active ? 'output${output}On' : 'output${output}Off',
     );
-  }
-}
-
-final prohibitedTags = {'TAG123', 'TAG456'};
-
-Future<void> onTagRead(String tagId) async {
-  if (prohibitedTags.contains(tagId)) {
-    // For example, use output 1 for the alarm
-    await activateAlarmOutput(1, durationSeconds: 2);
   }
 }
 
